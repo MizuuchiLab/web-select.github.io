@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>インフォームド・コンセント</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h1 {
+            text-align: center;
+        }
+        #terms {
+            border: 1px solid #ccc;
+            padding: 10px;
+            max-height: 200px;
+            overflow-y: scroll;
+            margin-bottom: 20px;
+            background-color: #f8f8f8;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: not-allowed;
+        }
+        button.active {
+            cursor: pointer;
+            background-color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>利用規約の確認</h1>
+        <div id="terms">
+            <!-- スクロール可能な文書の内容 -->
+            <p>ここに利用規約やプライバシーポリシーの全文を記述します。</p>
+            <p>例：この文書をよくお読みください。以下の内容に同意する場合のみ続行できます。</p>
+            <p>第1条: 利用者の義務...</p>
+            <p>第2条: 禁止事項...</p>
+            <p>第3条: プライバシー保護...</p>
+            <p>さらにたくさんの文書がここに記載されている想定です...</p>
+            <p>最後までスクロールすると同意ボタンがアクティブになります。</p>
+        </div>
+        <button id="agreeButton" disabled>同意する</button>
+    </div>
+
+    <script>
+        // スクロールイベントを監視してボタンをアクティブにする
+        const terms = document.getElementById("terms");
+        const agreeButton = document.getElementById("agreeButton");
+
+        terms.addEventListener("scroll", function () {
+            if (terms.scrollTop + terms.clientHeight >= terms.scrollHeight) {
+                agreeButton.disabled = false;
+                agreeButton.classList.add("active");
+            }
+        });
+
+        // ボタンが押された際の動作
+        agreeButton.addEventListener("click", function () {
+            alert("利用規約に同意しました。");
+            // 他の処理（例えば次のページへのリダイレクト）もここに追加できます
+        });
+    </script>
+</body>
+</html>
