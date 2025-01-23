@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>画像選択実験</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            text-align: center;
+        }
+        .instructions {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: left;
+        }
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 20px;
+            margin-top: 20px;
+        }
+        .image-cell {
+            text-align: center;
+        }
+        .image-cell img {
+            width: 300px;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .checkbox {
+            margin-top: 10px;
+            transform: scale(1.2);
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:disabled {
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="instructions">
+            <h2>実験説明</h2>
+            <p>
+                この実験では、以下の画像からいくつかを選択していただきます。
+                選択した画像は、ユーザーIDとともに記録されます。
+                完了ボタンを押すと、選択内容が保存されます。
+            </p>
+        </div>
+
+        <h1>画像選択実験</h1>
+        <div id="imageGrid" class="image-grid">
+            <!-- 画像とチェックボックスをここに動的に追加 -->
+        </div>
+        <button id="completeButton" onclick="processSelection()">完了</button>
+    </div>
+
+    <script>
+        let selectedSubFolder = "";
+        let imageFiles = [];
+
+        async function fetchFolderData() {
+            const response = await fetch("https://mizuuchi.lab.tuat.ac.jp/~ryunosuke/get_folders_and_files.php");
+            const data = await response.json();
+
+            // captured_views_* フォルダをランダムに選択
+            const folderKeys = Object.keys(data);
+            const parentFolder = folderKeys[Math.floor(Math.random() * folderKeys.length)];
+
+            // captured_views_* フォルダ内の画像をランダムに選択
+            const capturedViewFolders = data[parentFolder].filter(file => file.includes("captured_views_"));
+            selectedSubFolder = capturedViewFolders[Math.floor(Math.random() * capturedViewFolders.length)];
+
+            console.log("Selected SubFolder:", selectedSubFolder); // デバッグ用
+
+            // サーバーから返された画像一覧をそのまま使用
+            imageFiles = data[parentFolder];
+
+            loadImages();
+        }
+
+        function loadImages() {
+            const grid = document.getElementById("imageGrid");
+            grid.innerHTML = "";
+
+            imageFiles.forEach((file, index) => {
+                const cell = document.createElement("div");
+                cell.classList.add("image-cell");
+
+                const img = document.createElement("img");
+                img.src = file; // サーバーから取得したURL
+                img.alt = `Image ${index + 1}`;
+
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.classList.add("checkbox");
+                checkbox.id = `checkbox_${index}`;
+
+                cell.appendChild(img);
+                cell.appendChild(checkbox);
+                grid.appendChild(cell);
+            });
+        }
+
+
+        // 完了ボタンをクリック
+        async function processSelection() {
+            const selections = [];
+            imageFiles.forEach((file, index) => {
+                const checkbox = document.getElementById(`checkbox_${index}`);
+                if (checkbox.checked) {
+                    selections.push(file);
+                }
+            });
+
+            const userId = sessionStorage.getItem("userId") || "unknown_user";
+            const data = {
+                userId,
+                selectedSubFolder,
+                selectedImages: selections,
+                timestamp: new Date().toISOString()
+            };
+
+            const response = await fetch("save_results.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            });
+
+            if (response.ok) {
+                alert("選択内容が記録されました！");
+            } else {
+                alert("記録に失敗しました。");
+            }
+        }
+
+        // ページが読み込まれたときにサーバーからデータを取得
+        window.onload = fetchFolderData;
+    </script>
+</body>
+</html>

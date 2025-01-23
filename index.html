@@ -3,83 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>インフォームド・コンセント</title>
+    <title>利用規約</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f9f9f9;
+            margin: 20px;
         }
         .container {
             max-width: 600px;
-            margin: auto;
-            background: #fff;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-        h1 {
+            margin: 0 auto;
             text-align: center;
         }
-        #terms {
+        .terms-container {
             border: 1px solid #ccc;
-            padding: 10px;
-            max-height: 200px;
+            border-radius: 5px;
+            height: 300px;
             overflow-y: scroll;
-            margin-bottom: 20px;
-            background-color: #f8f8f8;
-        }
-        button {
-            display: block;
-            width: 100%;
             padding: 10px;
-            font-size: 16px;
-            color: #fff;
-            background-color: #007BFF;
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .button {
+            padding: 10px 20px;
+            text-decoration: none;
             border: none;
             border-radius: 5px;
-            cursor: not-allowed;
-        }
-        button.active {
             cursor: pointer;
-            background-color: #28a745;
+        }
+        .agree-button {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .right-buttons {
+            text-align: right;
+        }
+        .right-buttons a {
+            display: block;
+            margin: 5px 0;
+            color: #007BFF;
+            text-decoration: none;
+        }
+        .right-buttons a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>利用規約の確認</h1>
-        <div id="terms">
-            <!-- スクロール可能な文書の内容 -->
-            <p>ここに利用規約やプライバシーポリシーの全文を記述します。</p>
-            <p>例：この文書をよくお読みください。以下の内容に同意する場合のみ続行できます。</p>
-            <p>第1条: 利用者の義務...</p>
-            <p>第2条: 禁止事項...</p>
-            <p>第3条: プライバシー保護...</p>
-            <p>さらにたくさんの文書がここに記載されている想定です...</p>
-            <p>最後までスクロールすると同意ボタンがアクティブになります。</p>
+        <h1>利用規約</h1>
+        <div class="terms-container">
+            <p>ここに利用規約の長い内容を記載してください。</p>
+            <p>このエリアはスクロール可能です。</p>
+            <p>...</p>
+            <p>（利用規約の内容が続きます）</p>
         </div>
-        <button id="agreeButton" disabled>同意する</button>
+        <div class="button-container">
+            <button class="button agree-button" onclick="window.location.href='input_data.html';">同意する</button>
+            <div class="right-buttons">
+                <a href="login.html" class="button">ログインはこちらから</a>
+                <a href="delete-request.html" class="button">削除申請はこちらから</a>
+            </div>
+        </div>
     </div>
-
-    <script>
-        // スクロールイベントを監視してボタンをアクティブにする
-        const terms = document.getElementById("terms");
-        const agreeButton = document.getElementById("agreeButton");
-
-        terms.addEventListener("scroll", function () {
-            if (terms.scrollTop + terms.clientHeight >= terms.scrollHeight) {
-                agreeButton.disabled = false;
-                agreeButton.classList.add("active");
-            }
-        });
-
-        // ボタンが押された際の動作
-        agreeButton.addEventListener("click", function () {
-            alert("利用規約に同意しました。");
-            // 他の処理（例えば次のページへのリダイレクト）もここに追加できます
-        });
-    </script>
 </body>
 </html>

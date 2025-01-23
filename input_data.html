@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ID生成と利用用途</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #generatedOutput {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #d4d4d4;
+            border-radius: 8px;
+            background-color: #f8f8f8;
+        }
+        .id-display {
+            font-size: 18px;
+            font-weight: bold;
+            color: #d9534f;
+            text-align: center;
+        }
+        .info {
+            text-align: center;
+            color: #666;
+        }
+    </style>
+    <script>
+        async function requestUniqueId() {
+            try {
+                const response = await fetch('check_duplicate_and_generate.php', { method: 'POST' });
+                const data = await response.json();
+                if (data.success) {
+                    const userId = data.userId;
+                    document.getElementById('userId').textContent = userId;
+                    document.getElementById('hiddenUserId').value = userId;
+                    document.getElementById('generatedOutput').style.display = 'block';
+                } else {
+                    alert('ID生成に失敗しました: ' + (data.error || '不明なエラー'));
+                }
+            } catch (error) {
+                console.error('リクエストエラー:', error);
+                alert('リクエストに失敗しました。');
+            }
+        }
+
+        function confirmSubmission() {
+            const ageInput = document.getElementById('age');
+            const age = parseInt(ageInput.value, 10);
+
+            // 年齢が18未満の場合は警告
+            if (age < 18) {
+                alert('年齢は18歳以上でなければなりません。');
+                ageInput.focus();
+                return;
+            }
+
+            const form = document.getElementById('userForm');
+            form.action = 'process_form.php'; // フォームの送信先を設定
+            form.submit();
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>ユーザー情報設定</h1>
+        <form action="process_form.php" method="post" id="userForm">
+            <input type="hidden" id="hiddenUserId" name="userId">
+            <div class="form-group">
+                <label for="password">パスワード</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="nationality">国籍</label>
+                <input type="text" id="nationality" name="nationality" placeholder="例: 日本" required>
+            </div>
+            <div class="form-group">
+                <label for="gender">性別</label>
+                <select id="gender" name="gender" required>
+                    <option value="">選択してください</option>
+                    <option value="男性">男性</option>
+                    <option value="女性">女性</option>
+                    <option value="その他">その他</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="age">年齢</label>
+                <input type="number" id="age" name="age" min="18" placeholder="18歳以上で登録可能" required>
+            </div>
+            <button type="button" onclick="requestUniqueId()">IDを生成</button>
+        </form>
+
+        <div id="generatedOutput" style="display: none;">
+            <h2>生成されたユーザーID</h2>
+            <div class="id-display" id="userId"></div>
+            <p class="info">このIDとパスワードは忘れないように記録してください。</p>
+            <button type="button" onclick="confirmSubmission()">登録を確定</button>
+        </div>
+    </div>
+</body>
+</html>
